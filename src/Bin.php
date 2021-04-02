@@ -1,6 +1,6 @@
 <?php
 
-namespace Constellation\Helpers;
+namespace K310\Helpers;
 
 use Illuminate\Support\Traits\Macroable;
 

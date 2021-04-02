@@ -1,6 +1,6 @@
 <?php
 
-namespace Constellation\Helpers;
+namespace K310\Helpers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Arr;
