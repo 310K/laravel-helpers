@@ -1,0 +1,35 @@
+{
+    "name": "310k/laravel-helpers",
+    "description": "310K Laravel helpers",
+    "type": "laravel-module",
+    "license": "UNLICENSED",
+    "minimum-stability": "stable",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Malik Guerid",
+            "email": "m.guerid@310k.ch"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "K310\\Helpers\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "K310\\Helpers\\HelperServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.0"
+        }
+    }
+}
