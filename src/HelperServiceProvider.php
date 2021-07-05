@@ -475,7 +475,7 @@ class HelperServiceProvider extends ServiceProvider
         /**
          * Order a two dimensional associative array.
          * @example
-         * array_orderby($myTable, 'column1NameOrIndex', SORT_DESC, 'column2NameOrIndex', SORT_ASC, ...)
+         * Arr::orderBy($array, 'column1NameOrIndex', SORT_DESC, 'column2NameOrIndex', SORT_ASC, ...)
          * @return array Sorted array
          */
         Arr::macro('orderBy', function()
@@ -502,6 +502,28 @@ class HelperServiceProvider extends ServiceProvider
             call_user_func_array('array_multisort', $args);
     
             return array_pop($args);
+        });
+
+        //---------------------------------------------------------------------- orderSpecific
+
+        /**
+         * Order a two dimensional associative array by a specific order defined in an array.
+         * @example
+         * Arr::orderSpecific($array, 'name', ['Jacques', 'Alain', 'Pierre', 'Jean'])
+         * @return array Sorted array
+         */
+        Arr::macro('orderSpecific', function($array, $key, $orderArray)
+        {
+            $dict = array_flip($orderArray);
+
+            $positions = array_map(function($elem) use ($dict, $key)
+            {
+                return $dict[$elem[$key]] ?? INF;
+            }, $array);
+
+            array_multisort($positions, $array);
+
+            return $array;
         });
 
         //---------------------------------------------------------------------- groupBy
