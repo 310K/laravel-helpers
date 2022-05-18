@@ -3,17 +3,22 @@
     "description": "310K Laravel helpers",
     "type": "laravel-module",
     "license": "UNLICENSED",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "version": "1.0.0",
     "authors": [
         {
             "name": "Malik Guerid",
             "email": "m.guerid@310k.ch"
+        },
+        {
+            "name": "Guillaume Meyer",
+            "email": "g.meyer@310k.ch"
         }
     ],
     "require": {
-        "php": "^8.0",
-        "illuminate/support": "^8.0"
+        "php": "^8.0.2|^8.1",
+        "illuminate/support": "^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -25,11 +30,6 @@
             "providers": [
                 "K310\\Helpers\\HelperServiceProvider"
             ]
-        }
-    },
-    "config": {
-        "platform": {
-            "php": "8.0"
         }
     }
 }
