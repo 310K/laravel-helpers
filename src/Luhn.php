@@ -16,7 +16,7 @@ class Luhn
      * @param  integer $number
      * @return integer
      */
-    public function generate($number)
+    public static function generate($number)
     {
         $stack = 0;
         $digits = str_split(strrev($number), 1);
@@ -47,10 +47,10 @@ class Luhn
      * @param  integer $number
      * @return boolean
      */
-    public function validate($number)
+    public static function validate($number)
     {
         $original = substr($number, 0, strlen($number) - 1);
 
-        return $this->generate($original) === $number;
+        return Luhn::generate($original) === $number;
     }
 }
