@@ -11,6 +11,11 @@ if(!function_exists('cast'))
      */
 	function cast($value, $type)
 	{
+        if($value === null)
+        {
+            return $value;
+        }
+
         if(!empty($type))
         {
             switch($type)
