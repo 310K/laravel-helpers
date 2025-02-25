@@ -5,6 +5,7 @@ namespace K310\Helpers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Transliterator;
 
 class HelperServiceProvider extends ServiceProvider
 {
@@ -60,196 +61,25 @@ class HelperServiceProvider extends ServiceProvider
             return strtr($string, 'äâàáåãéèëêòóôõöøìíîïùúûüýñçþÿæœðø', 'ÄÂÀÁÅÃÉÈËÊÒÓÔÕÖØÌÍÎÏÙÚÛÜÝÑÇÞÝÆŒÐØ');
         });
 
-        //---------------------------------------------------------------------- remove accent
+        //---------------------------------------------------------------------- cyrillique to latin
 
         /**
-         * Remove all accent of a string.
+         * Transform a Cyrillic string to Latin (ISO 8859-1).
+         * @param  string  $string
+         * @return string
+         */
+        Str::macro('cyrillicToLatin', function($string)
+        {
+            $transliterator = Transliterator::create('Cyrillic-Latin');
+
+            return $transliterator->transliterate($string);
+        });
+
+        //---------------------------------------------------------------------- remove accents
+
+        /**
+         * Remove all accents of a string.
          * This function manage UTF8 string!
-         * Replacements:
-         * À => A
-         * Á => A
-         * Â => A
-         * Ã => A
-         * Ä => A
-         * Å => A
-         * Ç => C
-         * È => E
-         * É => E
-         * Ê => E
-         * Ë => E
-         * Ì => I
-         * Í => I
-         * Î => I
-         * Ï => I
-         * Ñ => N
-         * Ò => O
-         * Ó => O
-         * Ô => O
-         * Õ => O
-         * Ö => O
-         * Ù => U
-         * Ú => U
-         * Û => U
-         * Ü => U
-         * Ý => Y
-         * ß => s
-         * à => a
-         * á => a
-         * â => a
-         * ã => a
-         * ä => a
-         * å => a
-         * ç => c
-         * è => e
-         * é => e
-         * ê => e
-         * ë => e
-         * ì => i
-         * í => i
-         * î => i
-         * ï => i
-         * ñ => n
-         * ò => o
-         * ó => o
-         * ô => o
-         * õ => o
-         * ö => o
-         * ù => u
-         * ú => u
-         * û => u
-         * ü => u
-         * ý => y
-         * ÿ => y
-         * Ā => A
-         * ā => a
-         * Ă => A
-         * ă => a
-         * Ą => A
-         * ą => a
-         * Ć => C
-         * ć => c
-         * Ĉ => C
-         * ĉ => c
-         * Ċ => C
-         * ċ => c
-         * Č => C
-         * č => c
-         * Ď => D
-         * ď => d
-         * Đ => D
-         * đ => d
-         * Ē => E
-         * ē => e
-         * Ĕ => E
-         * ĕ => e
-         * Ė => E
-         * ė => e
-         * Ę => E
-         * ę => e
-         * Ě => E
-         * ě => e
-         * Ĝ => G
-         * ĝ => g
-         * Ğ => G
-         * ğ => g
-         * Ġ => G
-         * ġ => g
-         * Ģ => G
-         * ģ => g
-         * Ĥ => H
-         * ĥ => h
-         * Ħ => H
-         * ħ => h
-         * Ĩ => I
-         * ĩ => i
-         * Ī => I
-         * ī => i
-         * Ĭ => I
-         * ĭ => i
-         * Į => I
-         * į => i
-         * İ => I
-         * ı => i
-         * Ĳ => IJ
-         * ĳ => ij
-         * Ĵ => J
-         * ĵ => j
-         * Ķ => K
-         * ķ => k
-         * ĸ => k
-         * Ĺ => L
-         * ĺ => l
-         * Ļ => L
-         * ļ => l
-         * Ľ => L
-         * ľ => l
-         * Ŀ => L
-         * ŀ => l
-         * Ł => L
-         * ł => l
-         * Ń => N
-         * ń => n
-         * Ņ => N
-         * ņ => n
-         * Ň => N
-         * ň => n
-         * ŉ => N
-         * Ŋ => n
-         * ŋ => N
-         * Ō => O
-         * ō => o
-         * Ŏ => O
-         * ŏ => o
-         * Ő => O
-         * ő => o
-         * Œ => OE
-         * œ => oe
-         * Ŕ => R
-         * ŕ => r
-         * Ŗ => R
-         * ŗ => r
-         * Ř => R
-         * ř => r
-         * Ś => S
-         * ś => s
-         * Ŝ => S
-         * ŝ => s
-         * Ş => S
-         * ş => s
-         * Š => S
-         * š => s
-         * Ţ => T
-         * ţ => t
-         * Ť => T
-         * ť => t
-         * Ŧ => T
-         * ŧ => t
-         * Ũ => U
-         * ũ => u
-         * Ū => U
-         * ū => u
-         * Ŭ => U
-         * ŭ => u
-         * Ů => U
-         * ů => u
-         * Ű => U
-         * ű => u
-         * Ų => U
-         * ų => u
-         * Ŵ => W
-         * ŵ => w
-         * Ŷ => Y
-         * ŷ => y
-         * Ÿ => Y
-         * Ź => Z
-         * ź => z
-         * Ż => Z
-         * ż => z
-         * Ž => Z
-         * ž => z
-         * ſ => s
-         * Ø => O
-         * ø => o
          * @param  string $string
          * @return string
          */
@@ -260,103 +90,346 @@ class HelperServiceProvider extends ServiceProvider
                 return $string;
             }
 
-            $chars = array(
+            $chars = [
                 // Decompositions for Latin-1 Supplement
-                chr(195).chr(128) => 'A', chr(195).chr(129) => 'A',
-                chr(195).chr(130) => 'A', chr(195).chr(131) => 'A',
-                chr(195).chr(132) => 'A', chr(195).chr(133) => 'A',
-                chr(195).chr(135) => 'C', chr(195).chr(136) => 'E',
-                chr(195).chr(137) => 'E', chr(195).chr(138) => 'E',
-                chr(195).chr(139) => 'E', chr(195).chr(140) => 'I',
-                chr(195).chr(141) => 'I', chr(195).chr(142) => 'I',
-                chr(195).chr(143) => 'I', chr(195).chr(145) => 'N',
-                chr(195).chr(146) => 'O', chr(195).chr(147) => 'O',
-                chr(195).chr(148) => 'O', chr(195).chr(149) => 'O',
-                chr(195).chr(150) => 'O', chr(195).chr(152) => 'O', 
-                chr(195).chr(153) => 'U',
-                chr(195).chr(154) => 'U', chr(195).chr(155) => 'U',
-                chr(195).chr(156) => 'U', chr(195).chr(157) => 'Y',
-                chr(195).chr(159) => 's', chr(195).chr(160) => 'a',
-                chr(195).chr(161) => 'a', chr(195).chr(162) => 'a',
-                chr(195).chr(163) => 'a', chr(195).chr(164) => 'a',
-                chr(195).chr(165) => 'a', chr(195).chr(167) => 'c',
-                chr(195).chr(168) => 'e', chr(195).chr(169) => 'e',
-                chr(195).chr(170) => 'e', chr(195).chr(171) => 'e',
-                chr(195).chr(172) => 'i', chr(195).chr(173) => 'i',
-                chr(195).chr(174) => 'i', chr(195).chr(175) => 'i',
-                chr(195).chr(177) => 'n', chr(195).chr(178) => 'o',
-                chr(195).chr(179) => 'o', chr(195).chr(180) => 'o',
-                chr(195).chr(181) => 'o', chr(195).chr(182) => 'o',
-                chr(195).chr(182) => 'o', chr(195).chr(184) => 'o',
-                chr(195).chr(185) => 'u', chr(195).chr(186) => 'u', 
-                chr(195).chr(187) => 'u', chr(195).chr(188) => 'u',
-                chr(195).chr(189) => 'y', chr(195).chr(191) => 'y',
+                chr(195).chr(128) => 'A', // À (U+00C0) replaced by 'A'
+                chr(195).chr(129) => 'A', // Á (U+00C1) replaced by 'A'
+                chr(195).chr(130) => 'A', // Â (U+00C2) replaced by 'A'
+                chr(195).chr(131) => 'A', // Ã (U+00C3) replaced by 'A'
+                chr(195).chr(132) => 'A', // Ä (U+00C4) replaced by 'A'
+                chr(195).chr(133) => 'A', // Å (U+00C5) replaced by 'A'
+                chr(195).chr(135) => 'C', // Ç (U+00C7) replaced by 'C'
+                chr(195).chr(136) => 'E', // È (U+00C8) replaced by 'E'
+                chr(195).chr(137) => 'E', // É (U+00C9) replaced by 'E'
+                chr(195).chr(138) => 'E', // Ê (U+00CA) replaced by 'E'
+                chr(195).chr(139) => 'E', // Ë (U+00CB) replaced by 'E'
+                chr(195).chr(140) => 'I', // Ì (U+00CC) replaced by 'I'
+                chr(195).chr(141) => 'I', // Í (U+00CD) replaced by 'I'
+                chr(195).chr(142) => 'I', // Î (U+00CE) replaced by 'I'
+                chr(195).chr(143) => 'I', // Ï (U+00CF) replaced by 'I'
+                chr(195).chr(145) => 'N', // Ñ (U+00D1) replaced by 'N'
+                chr(195).chr(146) => 'O', // Ò (U+00D2) replaced by 'O'
+                chr(195).chr(147) => 'O', // Ó (U+00D3) replaced by 'O'
+                chr(195).chr(148) => 'O', // Ô (U+00D4) replaced by 'O'
+                chr(195).chr(149) => 'O', // Õ (U+00D5) replaced by 'O'
+                chr(195).chr(150) => 'O', // Ö (U+00D6) replaced by 'O'
+                chr(195).chr(152) => 'O', // Ø (U+00D8) replaced by 'O'
+                chr(195).chr(153) => 'U', // Ù (U+00D9) replaced by 'U'
+                chr(195).chr(154) => 'U', // Ú (U+00DA) replaced by 'U'
+                chr(195).chr(155) => 'U', // Û (U+00DB) replaced by 'U'
+                chr(195).chr(156) => 'U', // Ü (U+00DC) replaced by 'U'
+                chr(195).chr(157) => 'Y', // Ý (U+00DD) replaced by 'Y'
+                chr(195).chr(159) => 's', // ß (U+00DF) replaced by 's'
+                chr(195).chr(160) => 'a', // à (U+00E0) replaced by 'a'
+                chr(195).chr(161) => 'a', // á (U+00E1) replaced by 'a'
+                chr(195).chr(162) => 'a', // â (U+00E2) replaced by 'a'
+                chr(195).chr(163) => 'a', // ã (U+00E3) replaced by 'a'
+                chr(195).chr(164) => 'a', // ä (U+00E4) replaced by 'a'
+                chr(195).chr(165) => 'a', // å (U+00E5) replaced by 'a'
+                chr(195).chr(167) => 'c', // ç (U+00E7) replaced by 'c'
+                chr(195).chr(168) => 'e', // è (U+00E8) replaced by 'e'
+                chr(195).chr(169) => 'e', // é (U+00E9) replaced by 'e'
+                chr(195).chr(170) => 'e', // ê (U+00EA) replaced by 'e'
+                chr(195).chr(171) => 'e', // ë (U+00EB) replaced by 'e'
+                chr(195).chr(172) => 'i', // ì (U+00EC) replaced by 'i'
+                chr(195).chr(173) => 'i', // í (U+00ED) replaced by 'i'
+                chr(195).chr(174) => 'i', // î (U+00EE) replaced by 'i'
+                chr(195).chr(175) => 'i', // ï (U+00EF) replaced by 'i'
+                chr(195).chr(177) => 'n', // ñ (U+00F1) replaced by 'n'
+                chr(195).chr(178) => 'o', // ò (U+00F2) replaced by 'o'
+                chr(195).chr(179) => 'o', // ó (U+00F3) replaced by 'o'
+                chr(195).chr(180) => 'o', // ô (U+00F4) replaced by 'o'
+                chr(195).chr(181) => 'o', // õ (U+00F5) replaced by 'o'
+                chr(195).chr(182) => 'o', // ö (U+00F6) replaced by 'o'
+                chr(195).chr(184) => 'o', // ø (U+00F8) replaced by 'o'
+                chr(195).chr(185) => 'u', // ù (U+00F9) replaced by 'u'
+                chr(195).chr(186) => 'u', // ú (U+00FA) replaced by 'u'
+                chr(195).chr(187) => 'u', // û (U+00FB) replaced by 'u'
+                chr(195).chr(188) => 'u', // ü (U+00FC) replaced by 'u'
+                chr(195).chr(189) => 'y', // ý (U+00FD) replaced by 'y'
+                chr(195).chr(191) => 'y', // ÿ (U+00FF) replaced by 'y'
                 // Decompositions for Latin Extended-A
-                chr(196).chr(128) => 'A', chr(196).chr(129) => 'a',
-                chr(196).chr(130) => 'A', chr(196).chr(131) => 'a',
-                chr(196).chr(132) => 'A', chr(196).chr(133) => 'a',
-                chr(196).chr(134) => 'C', chr(196).chr(135) => 'c',
-                chr(196).chr(136) => 'C', chr(196).chr(137) => 'c',
-                chr(196).chr(138) => 'C', chr(196).chr(139) => 'c',
-                chr(196).chr(140) => 'C', chr(196).chr(141) => 'c',
-                chr(196).chr(142) => 'D', chr(196).chr(143) => 'd',
-                chr(196).chr(144) => 'D', chr(196).chr(145) => 'd',
-                chr(196).chr(146) => 'E', chr(196).chr(147) => 'e',
-                chr(196).chr(148) => 'E', chr(196).chr(149) => 'e',
-                chr(196).chr(150) => 'E', chr(196).chr(151) => 'e',
-                chr(196).chr(152) => 'E', chr(196).chr(153) => 'e',
-                chr(196).chr(154) => 'E', chr(196).chr(155) => 'e',
-                chr(196).chr(156) => 'G', chr(196).chr(157) => 'g',
-                chr(196).chr(158) => 'G', chr(196).chr(159) => 'g',
-                chr(196).chr(160) => 'G', chr(196).chr(161) => 'g',
-                chr(196).chr(162) => 'G', chr(196).chr(163) => 'g',
-                chr(196).chr(164) => 'H', chr(196).chr(165) => 'h',
-                chr(196).chr(166) => 'H', chr(196).chr(167) => 'h',
-                chr(196).chr(168) => 'I', chr(196).chr(169) => 'i',
-                chr(196).chr(170) => 'I', chr(196).chr(171) => 'i',
-                chr(196).chr(172) => 'I', chr(196).chr(173) => 'i',
-                chr(196).chr(174) => 'I', chr(196).chr(175) => 'i',
-                chr(196).chr(176) => 'I', chr(196).chr(177) => 'i',
-                chr(196).chr(178) => 'IJ',chr(196).chr(179) => 'ij',
-                chr(196).chr(180) => 'J', chr(196).chr(181) => 'j',
-                chr(196).chr(182) => 'K', chr(196).chr(183) => 'k',
-                chr(196).chr(184) => 'k', chr(196).chr(185) => 'L',
-                chr(196).chr(186) => 'l', chr(196).chr(187) => 'L',
-                chr(196).chr(188) => 'l', chr(196).chr(189) => 'L',
-                chr(196).chr(190) => 'l', chr(196).chr(191) => 'L',
-                chr(197).chr(128) => 'l', chr(197).chr(129) => 'L',
-                chr(197).chr(130) => 'l', chr(197).chr(131) => 'N',
-                chr(197).chr(132) => 'n', chr(197).chr(133) => 'N',
-                chr(197).chr(134) => 'n', chr(197).chr(135) => 'N',
-                chr(197).chr(136) => 'n', chr(197).chr(137) => 'N',
-                chr(197).chr(138) => 'n', chr(197).chr(139) => 'N',
-                chr(197).chr(140) => 'O', chr(197).chr(141) => 'o',
-                chr(197).chr(142) => 'O', chr(197).chr(143) => 'o',
-                chr(197).chr(144) => 'O', chr(197).chr(145) => 'o',
-                chr(197).chr(146) => 'OE',chr(197).chr(147) => 'oe',
-                chr(197).chr(148) => 'R',chr(197).chr(149) => 'r',
-                chr(197).chr(150) => 'R',chr(197).chr(151) => 'r',
-                chr(197).chr(152) => 'R',chr(197).chr(153) => 'r',
-                chr(197).chr(154) => 'S',chr(197).chr(155) => 's',
-                chr(197).chr(156) => 'S',chr(197).chr(157) => 's',
-                chr(197).chr(158) => 'S',chr(197).chr(159) => 's',
-                chr(197).chr(160) => 'S', chr(197).chr(161) => 's',
-                chr(197).chr(162) => 'T', chr(197).chr(163) => 't',
-                chr(197).chr(164) => 'T', chr(197).chr(165) => 't',
-                chr(197).chr(166) => 'T', chr(197).chr(167) => 't',
-                chr(197).chr(168) => 'U', chr(197).chr(169) => 'u',
-                chr(197).chr(170) => 'U', chr(197).chr(171) => 'u',
-                chr(197).chr(172) => 'U', chr(197).chr(173) => 'u',
-                chr(197).chr(174) => 'U', chr(197).chr(175) => 'u',
-                chr(197).chr(176) => 'U', chr(197).chr(177) => 'u',
-                chr(197).chr(178) => 'U', chr(197).chr(179) => 'u',
-                chr(197).chr(180) => 'W', chr(197).chr(181) => 'w',
-                chr(197).chr(182) => 'Y', chr(197).chr(183) => 'y',
-                chr(197).chr(184) => 'Y', chr(197).chr(185) => 'Z',
-                chr(197).chr(186) => 'z', chr(197).chr(187) => 'Z',
-                chr(197).chr(188) => 'z', chr(197).chr(189) => 'Z',
-                chr(197).chr(190) => 'z', chr(197).chr(191) => 's'
-            );
+                chr(196).chr(128) => 'A', // 'Ä' (U+00C4) replaced by 'A'
+                chr(196).chr(129) => 'a', // 'ä' (U+00E4) replaced by 'a'
+                chr(196).chr(130) => 'A', // 'Å' (U+00C5) replaced by 'A'
+                chr(196).chr(131) => 'a', // 'å' (U+00E5) replaced by 'a'
+                chr(196).chr(132) => 'A', // 'Æ' (U+00C6) replaced by 'A'
+                chr(196).chr(133) => 'a', // 'æ' (U+00E6) replaced by 'a'
+                chr(196).chr(134) => 'C', // 'Ç' (U+00C7) replaced by 'C'
+                chr(196).chr(135) => 'c', // 'ç' (U+00E7) replaced by 'c'
+                chr(196).chr(136) => 'Č', // 'Č' (U+010C) replaced by 'C'
+                chr(196).chr(137) => 'c', // 'č' (U+010D) replaced by 'c'
+                chr(196).chr(138) => 'C', // 'Č' (U+010C) replaced by 'C'
+                chr(196).chr(139) => 'c', // 'č' (U+010D) replaced by 'c'
+                chr(196).chr(140) => 'C', // 'Č' (U+010C) replaced by 'C'
+                chr(196).chr(141) => 'c', // 'č' (U+010D) replaced by 'c'
+                chr(196).chr(142) => 'D', // 'Ď' (U+010E) replaced by 'D'
+                chr(196).chr(143) => 'd', // 'ď' (U+010F) replaced by 'd'
+                chr(196).chr(144) => 'D', // 'Đ' (U+0110) replaced by 'D'
+                chr(196).chr(145) => 'd', // 'đ' (U+0111) replaced by 'd'
+                chr(196).chr(146) => 'E', // 'Ē' (U+0112) replaced by 'E'
+                chr(196).chr(147) => 'e', // 'ē' (U+0113) replaced by 'e'
+                chr(196).chr(148) => 'E', // 'Ĕ' (U+0114) replaced by 'E'
+                chr(196).chr(149) => 'e', // 'ĕ' (U+0115) replaced by 'e'
+                chr(196).chr(150) => 'E', // 'Ė' (U+0116) replaced by 'E'
+                chr(196).chr(151) => 'e', // 'ė' (U+0117) replaced by 'e'
+                chr(196).chr(152) => 'E', // 'Ę' (U+0118) replaced by 'E'
+                chr(196).chr(153) => 'e', // 'ę' (U+0119) replaced by 'e'
+                chr(196).chr(154) => 'E', // 'Ě' (U+011A) replaced by 'E'
+                chr(196).chr(155) => 'e', // 'ě' (U+011B) replaced by 'e'
+                chr(196).chr(156) => 'G', // 'Ĝ' (U+011C) replaced by 'G'
+                chr(196).chr(157) => 'g', // 'ĝ' (U+011D) replaced by 'g'
+                chr(196).chr(158) => 'G', // 'Ğ' (U+011E) replaced by 'G'
+                chr(196).chr(159) => 'g', // 'ğ' (U+011F) replaced by 'g'
+                chr(196).chr(160) => 'G', // 'Ġ' (U+0120) replaced by 'G'
+                chr(196).chr(161) => 'g', // 'ġ' (U+0121) replaced by 'g'
+                chr(196).chr(162) => 'G', // 'Ģ' (U+0122) replaced by 'G'
+                chr(196).chr(163) => 'g', // 'ģ' (U+0123) replaced by 'g'
+                chr(196).chr(164) => 'H', // 'Ĥ' (U+0124) replaced by 'H'
+                chr(196).chr(165) => 'h', // 'ĥ' (U+0125) replaced by 'h'
+                chr(196).chr(166) => 'H', // 'Ħ' (U+0126) replaced by 'H'
+                chr(196).chr(167) => 'h', // 'ħ' (U+0127) replaced by 'h'
+                chr(196).chr(168) => 'I', // 'Ĩ' (U+0128) replaced by 'I'
+                chr(196).chr(169) => 'i', // 'ĩ' (U+0129) replaced by 'i'
+                chr(196).chr(170) => 'I', // 'Ī' (U+012A) replaced by 'I'
+                chr(196).chr(171) => 'i', // 'ī' (U+012B) replaced by 'i'
+                chr(196).chr(172) => 'I', // 'Ĭ' (U+012C) replaced by 'I'
+                chr(196).chr(173) => 'i', // 'ĭ' (U+012D) replaced by 'i'
+                chr(196).chr(174) => 'I', // 'Į' (U+012E) replaced by 'I'
+                chr(196).chr(175) => 'i', // 'į' (U+012F) replaced by 'i'
+                chr(196).chr(176) => 'I', // 'İ' (U+0130) replaced by 'I'
+                chr(196).chr(177) => 'i', // 'ı' (U+0131) replaced by 'i'
+                chr(196).chr(178) => 'IJ', // 'Ĳ' (U+0132) replaced by 'IJ'
+                chr(196).chr(179) => 'ij', // 'ĳ' (U+0133) replaced by 'ij'
+                chr(196).chr(180) => 'J', // 'Ĵ' (U+0134) replaced by 'J'
+                chr(196).chr(181) => 'j', // 'ĵ' (U+0135) replaced by 'j'
+                chr(196).chr(182) => 'K', // 'Ķ' (U+0136) replaced by 'K'
+                chr(196).chr(183) => 'k', // 'ķ' (U+0137) replaced by 'k'
+                chr(196).chr(184) => 'k', // 'ĸ' (U+0138) replaced by 'k'
+                chr(196).chr(185) => 'L', // 'Ĺ' (U+0139) replaced by 'L'
+                chr(196).chr(186) => 'l', // 'ĺ' (U+013A) replaced by 'l'
+                chr(196).chr(187) => 'L', // 'Ļ' (U+013B) replaced by 'L'
+                chr(196).chr(188) => 'l', // 'ļ' (U+013C) replaced by 'l'
+                chr(196).chr(189) => 'L', // 'Ľ' (U+013D) replaced by 'L'
+                chr(196).chr(190) => 'l', // 'ľ' (U+013E) replaced by 'l'
+                chr(196).chr(191) => 'L', // 'Ŀ' (U+013F) replaced by 'L'
+                chr(197).chr(128) => 'l', // 'ŀ' (U+0140) replaced by 'l'
+                chr(197).chr(129) => 'L', // 'Ł' (U+0141) replaced by 'L'
+                chr(197).chr(130) => 'l', // 'ł' (U+0142) replaced by 'l'
+                chr(197).chr(131) => 'N', // 'Ń' (U+0143) replaced by 'N'
+                chr(197).chr(132) => 'n', // 'ń' (U+0144) replaced by 'n'
+                chr(197).chr(133) => 'N', // 'Ņ' (U+0145) replaced by 'N'
+                chr(197).chr(134) => 'n', // 'ņ' (U+0146) replaced by 'n'
+                chr(197).chr(135) => 'N', // 'Ň' (U+0147) replaced by 'N'
+                chr(197).chr(136) => 'n', // 'ň' (U+0148) replaced by 'n'
+                chr(197).chr(137) => 'N', // 'ŉ' (U+0149) replaced by 'N'
+                chr(197).chr(138) => 'n', // 'Ŋ' (U+014A) replaced by 'n'
+                chr(197).chr(139) => 'N', // 'ŋ' (U+014B) replaced by 'N'
+                chr(197).chr(140) => 'O', // 'Ō' (U+014C) replaced by 'O'
+                chr(197).chr(141) => 'o', // 'ō' (U+014D) replaced by 'o'
+                chr(197).chr(142) => 'O', // 'Ŏ' (U+014E) replaced by 'O'
+                chr(197).chr(143) => 'o', // 'ŏ' (U+014F) replaced by 'o'
+                chr(197).chr(144) => 'O', // 'Ő' (U+0150) replaced by 'O'
+                chr(197).chr(145) => 'o', // 'ő' (U+0151) replaced by 'o'
+                chr(197).chr(146) => 'OE', // 'Œ' (U+0152) replaced by 'OE'
+                chr(197).chr(147) => 'oe', // 'œ' (U+0153) replaced by 'oe'
+                chr(197).chr(148) => 'R', // 'Ŕ' (U+0154) replaced by 'R'
+                chr(197).chr(149) => 'r', // 'ŕ' (U+0155) replaced by 'r'
+                chr(197).chr(150) => 'R', // 'Ŗ' (U+0156) replaced by 'R'
+                chr(197).chr(151) => 'r', // 'ŗ' (U+0157) replaced by 'r'
+                chr(197).chr(152) => 'R', // 'Ř' (U+0158) replaced by 'R'
+                chr(197).chr(153) => 'r', // 'ř' (U+0159) replaced by 'r'
+                chr(197).chr(154) => 'S', // 'Ś' (U+015A) replaced by 'S'
+                chr(197).chr(155) => 's', // 'ś' (U+015B) replaced by 's'
+                chr(197).chr(156) => 'S', // 'Ŝ' (U+015C) replaced by 'S'
+                chr(197).chr(157) => 's', // 'ŝ' (U+015D) replaced by 's'
+                chr(197).chr(158) => 'S', // 'Ş' (U+015E) replaced by 'S'
+                chr(197).chr(159) => 's', // 'ş' (U+015F) replaced by 's'
+                chr(197).chr(160) => 'S', // 'Š' (U+0160) replaced by 'S'
+                chr(197).chr(161) => 's', // 'š' (U+0161) replaced by 's'
+                chr(197).chr(162) => 'T', // 'Ţ' (U+0162) replaced by 'T'
+                chr(197).chr(163) => 't', // 'ţ' (U+0163) replaced by 't'
+                chr(197).chr(164) => 'T', // 'Ť' (U+0164) replaced by 'T'
+                chr(197).chr(165) => 't', // 'ť' (U+0165) replaced by 't'
+                chr(197).chr(166) => 'T', // 'Ŧ' (U+0166) replaced by 'T'
+                chr(197).chr(167) => 't', // 'ŧ' (U+0167) replaced by 't'
+                chr(197).chr(168) => 'U', // 'Ũ' (U+0168) replaced by 'U'
+                chr(197).chr(169) => 'u', // 'ũ' (U+0169) replaced by 'u'
+                chr(197).chr(170) => 'U', // 'Ū' (U+016A) replaced by 'U'
+                chr(197).chr(171) => 'u', // 'ū' (U+016B) replaced by 'u'
+                chr(197).chr(172) => 'U', // 'Ŭ' (U+016C) replaced by 'U'
+                chr(197).chr(173) => 'u', // 'ŭ' (U+016D) replaced by 'u'
+                chr(197).chr(174) => 'U', // 'Ů' (U+016E) replaced by 'U'
+                chr(197).chr(175) => 'u', // 'ů' (U+016F) replaced by 'u'
+                chr(197).chr(176) => 'U', // 'Ű' (U+0170) replaced by 'U'
+                chr(197).chr(177) => 'u', // 'ű' (U+0171) replaced by 'u'
+                chr(197).chr(178) => 'U', // 'Ų' (U+0172) replaced by 'U'
+                chr(197).chr(179) => 'u', // 'ų' (U+0173) replaced by 'u'
+                chr(197).chr(180) => 'W', // 'Ŵ' (U+0174) replaced by 'W'
+                chr(197).chr(181) => 'w', // 'ŵ' (U+0175) replaced by 'w'
+                chr(197).chr(182) => 'Y', // 'Ŷ' (U+0176) replaced by 'Y'
+                chr(197).chr(183) => 'y', // 'ŷ' (U+0177) replaced by 'y'
+                chr(197).chr(184) => 'Y', // 'Ÿ' (U+0178) replaced by 'Y'
+                chr(197).chr(185) => 'Z', // 'Ź' (U+0179) replaced by 'Z'
+                chr(197).chr(186) => 'z', // 'ź' (U+017A) replaced by 'z'
+                chr(197).chr(187) => 'Z', // 'Ż' (U+017B) replaced by 'Z'
+                chr(197).chr(188) => 'z', // 'ż' (U+017C) replaced by 'z'
+                chr(197).chr(189) => 'Z', // 'Ž' (U+017D) replaced by 'Z'
+                chr(197).chr(190) => 'z', // 'ž' (U+017E) replaced by 'z'
+                chr(197).chr(191) => 's', // 'ſ' (U+017F) replaced by 's'
+            ];
+
+            $string = strtr($string, $chars);
+
+            return $string;
+        });
+
+        //---------------------------------------------------------------------- remove non-Latin1 (ISO 8859-1) accents
+
+        /**
+         * Remove non-Latin1 (ISO 8859-1) accents of a string.
+         * This function manage UTF8 string!
+         * @param  string $string
+         * @return string
+         */
+        Str::macro('removeNonLatin1Accent', function($string)
+        {
+            if(!preg_match('/[\x80-\xff]/', $string))
+            {
+                return $string;
+            }
+
+            $chars = [
+                // Decompositions for Latin Extended-A
+                chr(196).chr(128) => 'A', // 'Ä' (U+00C4) replaced by 'A'
+                chr(196).chr(129) => 'a', // 'ä' (U+00E4) replaced by 'a'
+                chr(196).chr(130) => 'A', // 'Å' (U+00C5) replaced by 'A'
+                chr(196).chr(131) => 'a', // 'å' (U+00E5) replaced by 'a'
+                chr(196).chr(132) => 'A', // 'Æ' (U+00C6) replaced by 'A'
+                chr(196).chr(133) => 'a', // 'æ' (U+00E6) replaced by 'a'
+                chr(196).chr(134) => 'C', // 'Ç' (U+00C7) replaced by 'C'
+                chr(196).chr(135) => 'c', // 'ç' (U+00E7) replaced by 'c'
+                chr(196).chr(136) => 'Č', // 'Č' (U+010C) replaced by 'C'
+                chr(196).chr(137) => 'c', // 'č' (U+010D) replaced by 'c'
+                chr(196).chr(138) => 'C', // 'Č' (U+010C) replaced by 'C'
+                chr(196).chr(139) => 'c', // 'č' (U+010D) replaced by 'c'
+                chr(196).chr(140) => 'C', // 'Č' (U+010C) replaced by 'C'
+                chr(196).chr(141) => 'c', // 'č' (U+010D) replaced by 'c'
+                chr(196).chr(142) => 'D', // 'Ď' (U+010E) replaced by 'D'
+                chr(196).chr(143) => 'd', // 'ď' (U+010F) replaced by 'd'
+                chr(196).chr(144) => 'D', // 'Đ' (U+0110) replaced by 'D'
+                chr(196).chr(145) => 'd', // 'đ' (U+0111) replaced by 'd'
+                chr(196).chr(146) => 'E', // 'Ē' (U+0112) replaced by 'E'
+                chr(196).chr(147) => 'e', // 'ē' (U+0113) replaced by 'e'
+                chr(196).chr(148) => 'E', // 'Ĕ' (U+0114) replaced by 'E'
+                chr(196).chr(149) => 'e', // 'ĕ' (U+0115) replaced by 'e'
+                chr(196).chr(150) => 'E', // 'Ė' (U+0116) replaced by 'E'
+                chr(196).chr(151) => 'e', // 'ė' (U+0117) replaced by 'e'
+                chr(196).chr(152) => 'E', // 'Ę' (U+0118) replaced by 'E'
+                chr(196).chr(153) => 'e', // 'ę' (U+0119) replaced by 'e'
+                chr(196).chr(154) => 'E', // 'Ě' (U+011A) replaced by 'E'
+                chr(196).chr(155) => 'e', // 'ě' (U+011B) replaced by 'e'
+                chr(196).chr(156) => 'G', // 'Ĝ' (U+011C) replaced by 'G'
+                chr(196).chr(157) => 'g', // 'ĝ' (U+011D) replaced by 'g'
+                chr(196).chr(158) => 'G', // 'Ğ' (U+011E) replaced by 'G'
+                chr(196).chr(159) => 'g', // 'ğ' (U+011F) replaced by 'g'
+                chr(196).chr(160) => 'G', // 'Ġ' (U+0120) replaced by 'G'
+                chr(196).chr(161) => 'g', // 'ġ' (U+0121) replaced by 'g'
+                chr(196).chr(162) => 'G', // 'Ģ' (U+0122) replaced by 'G'
+                chr(196).chr(163) => 'g', // 'ģ' (U+0123) replaced by 'g'
+                chr(196).chr(164) => 'H', // 'Ĥ' (U+0124) replaced by 'H'
+                chr(196).chr(165) => 'h', // 'ĥ' (U+0125) replaced by 'h'
+                chr(196).chr(166) => 'H', // 'Ħ' (U+0126) replaced by 'H'
+                chr(196).chr(167) => 'h', // 'ħ' (U+0127) replaced by 'h'
+                chr(196).chr(168) => 'I', // 'Ĩ' (U+0128) replaced by 'I'
+                chr(196).chr(169) => 'i', // 'ĩ' (U+0129) replaced by 'i'
+                chr(196).chr(170) => 'I', // 'Ī' (U+012A) replaced by 'I'
+                chr(196).chr(171) => 'i', // 'ī' (U+012B) replaced by 'i'
+                chr(196).chr(172) => 'I', // 'Ĭ' (U+012C) replaced by 'I'
+                chr(196).chr(173) => 'i', // 'ĭ' (U+012D) replaced by 'i'
+                chr(196).chr(174) => 'I', // 'Į' (U+012E) replaced by 'I'
+                chr(196).chr(175) => 'i', // 'į' (U+012F) replaced by 'i'
+                chr(196).chr(176) => 'I', // 'İ' (U+0130) replaced by 'I'
+                chr(196).chr(177) => 'i', // 'ı' (U+0131) replaced by 'i'
+                chr(196).chr(178) => 'IJ', // 'Ĳ' (U+0132) replaced by 'IJ'
+                chr(196).chr(179) => 'ij', // 'ĳ' (U+0133) replaced by 'ij'
+                chr(196).chr(180) => 'J', // 'Ĵ' (U+0134) replaced by 'J'
+                chr(196).chr(181) => 'j', // 'ĵ' (U+0135) replaced by 'j'
+                chr(196).chr(182) => 'K', // 'Ķ' (U+0136) replaced by 'K'
+                chr(196).chr(183) => 'k', // 'ķ' (U+0137) replaced by 'k'
+                chr(196).chr(184) => 'k', // 'ĸ' (U+0138) replaced by 'k'
+                chr(196).chr(185) => 'L', // 'Ĺ' (U+0139) replaced by 'L'
+                chr(196).chr(186) => 'l', // 'ĺ' (U+013A) replaced by 'l'
+                chr(196).chr(187) => 'L', // 'Ļ' (U+013B) replaced by 'L'
+                chr(196).chr(188) => 'l', // 'ļ' (U+013C) replaced by 'l'
+                chr(196).chr(189) => 'L', // 'Ľ' (U+013D) replaced by 'L'
+                chr(196).chr(190) => 'l', // 'ľ' (U+013E) replaced by 'l'
+                chr(196).chr(191) => 'L', // 'Ŀ' (U+013F) replaced by 'L'
+                chr(197).chr(128) => 'l', // 'ŀ' (U+0140) replaced by 'l'
+                chr(197).chr(129) => 'L', // 'Ł' (U+0141) replaced by 'L'
+                chr(197).chr(130) => 'l', // 'ł' (U+0142) replaced by 'l'
+                chr(197).chr(131) => 'N', // 'Ń' (U+0143) replaced by 'N'
+                chr(197).chr(132) => 'n', // 'ń' (U+0144) replaced by 'n'
+                chr(197).chr(133) => 'N', // 'Ņ' (U+0145) replaced by 'N'
+                chr(197).chr(134) => 'n', // 'ņ' (U+0146) replaced by 'n'
+                chr(197).chr(135) => 'N', // 'Ň' (U+0147) replaced by 'N'
+                chr(197).chr(136) => 'n', // 'ň' (U+0148) replaced by 'n'
+                chr(197).chr(137) => 'N', // 'ŉ' (U+0149) replaced by 'N'
+                chr(197).chr(138) => 'n', // 'Ŋ' (U+014A) replaced by 'n'
+                chr(197).chr(139) => 'N', // 'ŋ' (U+014B) replaced by 'N'
+                chr(197).chr(140) => 'O', // 'Ō' (U+014C) replaced by 'O'
+                chr(197).chr(141) => 'o', // 'ō' (U+014D) replaced by 'o'
+                chr(197).chr(142) => 'O', // 'Ŏ' (U+014E) replaced by 'O'
+                chr(197).chr(143) => 'o', // 'ŏ' (U+014F) replaced by 'o'
+                chr(197).chr(144) => 'O', // 'Ő' (U+0150) replaced by 'O'
+                chr(197).chr(145) => 'o', // 'ő' (U+0151) replaced by 'o'
+                chr(197).chr(146) => 'OE', // 'Œ' (U+0152) replaced by 'OE'
+                chr(197).chr(147) => 'oe', // 'œ' (U+0153) replaced by 'oe'
+                chr(197).chr(148) => 'R', // 'Ŕ' (U+0154) replaced by 'R'
+                chr(197).chr(149) => 'r', // 'ŕ' (U+0155) replaced by 'r'
+                chr(197).chr(150) => 'R', // 'Ŗ' (U+0156) replaced by 'R'
+                chr(197).chr(151) => 'r', // 'ŗ' (U+0157) replaced by 'r'
+                chr(197).chr(152) => 'R', // 'Ř' (U+0158) replaced by 'R'
+                chr(197).chr(153) => 'r', // 'ř' (U+0159) replaced by 'r'
+                chr(197).chr(154) => 'S', // 'Ś' (U+015A) replaced by 'S'
+                chr(197).chr(155) => 's', // 'ś' (U+015B) replaced by 's'
+                chr(197).chr(156) => 'S', // 'Ŝ' (U+015C) replaced by 'S'
+                chr(197).chr(157) => 's', // 'ŝ' (U+015D) replaced by 's'
+                chr(197).chr(158) => 'S', // 'Ş' (U+015E) replaced by 'S'
+                chr(197).chr(159) => 's', // 'ş' (U+015F) replaced by 's'
+                chr(197).chr(160) => 'S', // 'Š' (U+0160) replaced by 'S'
+                chr(197).chr(161) => 's', // 'š' (U+0161) replaced by 's'
+                chr(197).chr(162) => 'T', // 'Ţ' (U+0162) replaced by 'T'
+                chr(197).chr(163) => 't', // 'ţ' (U+0163) replaced by 't'
+                chr(197).chr(164) => 'T', // 'Ť' (U+0164) replaced by 'T'
+                chr(197).chr(165) => 't', // 'ť' (U+0165) replaced by 't'
+                chr(197).chr(166) => 'T', // 'Ŧ' (U+0166) replaced by 'T'
+                chr(197).chr(167) => 't', // 'ŧ' (U+0167) replaced by 't'
+                chr(197).chr(168) => 'U', // 'Ũ' (U+0168) replaced by 'U'
+                chr(197).chr(169) => 'u', // 'ũ' (U+0169) replaced by 'u'
+                chr(197).chr(170) => 'U', // 'Ū' (U+016A) replaced by 'U'
+                chr(197).chr(171) => 'u', // 'ū' (U+016B) replaced by 'u'
+                chr(197).chr(172) => 'U', // 'Ŭ' (U+016C) replaced by 'U'
+                chr(197).chr(173) => 'u', // 'ŭ' (U+016D) replaced by 'u'
+                chr(197).chr(174) => 'U', // 'Ů' (U+016E) replaced by 'U'
+                chr(197).chr(175) => 'u', // 'ů' (U+016F) replaced by 'u'
+                chr(197).chr(176) => 'U', // 'Ű' (U+0170) replaced by 'U'
+                chr(197).chr(177) => 'u', // 'ű' (U+0171) replaced by 'u'
+                chr(197).chr(178) => 'U', // 'Ų' (U+0172) replaced by 'U'
+                chr(197).chr(179) => 'u', // 'ų' (U+0173) replaced by 'u'
+                chr(197).chr(180) => 'W', // 'Ŵ' (U+0174) replaced by 'W'
+                chr(197).chr(181) => 'w', // 'ŵ' (U+0175) replaced by 'w'
+                chr(197).chr(182) => 'Y', // 'Ŷ' (U+0176) replaced by 'Y'
+                chr(197).chr(183) => 'y', // 'ŷ' (U+0177) replaced by 'y'
+                chr(197).chr(184) => 'Y', // 'Ÿ' (U+0178) replaced by 'Y'
+                chr(197).chr(185) => 'Z', // 'Ź' (U+0179) replaced by 'Z'
+                chr(197).chr(186) => 'z', // 'ź' (U+017A) replaced by 'z'
+                chr(197).chr(187) => 'Z', // 'Ż' (U+017B) replaced by 'Z'
+                chr(197).chr(188) => 'z', // 'ż' (U+017C) replaced by 'z'
+                chr(197).chr(189) => 'Z', // 'Ž' (U+017D) replaced by 'Z'
+                chr(197).chr(190) => 'z', // 'ž' (U+017E) replaced by 'z'
+                chr(197).chr(191) => 's', // 'ſ' (U+017F) replaced by 's'
+            ];
 
             $string = strtr($string, $chars);
 
@@ -380,6 +453,7 @@ class HelperServiceProvider extends ServiceProvider
             return preg_replace('#[^a-zA-Z0-9]#mi', '', $string);
         });
 
+        //---------------------------------------------------------------------- searchable
 
         /**
          * Optimize string for search.
